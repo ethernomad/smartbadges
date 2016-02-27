@@ -20,6 +20,7 @@ contract SmartBadges {
 
     struct Awarding {
         bool revokable;
+        bool revoked;
         uint time;
         uint expiration;
         uint level;
@@ -64,6 +65,7 @@ contract SmartBadges {
 
         accountBadgeAwardings[recipient][badgeHash] = Awarding({
             revokable: revokable,
+            revoked: false,
             time: block.timestamp,
             expiration: expiration,
             level: level,
@@ -73,7 +75,9 @@ contract SmartBadges {
     }
 
     function revoke(address recipient, bytes32 badgeHash) isOwner(badgeHash) external {
-        if (accountBadgeAwardings[recipient][badgeHash].revokable == true) {
+        Awarding awarding = accountBadgeAwardings[recipient][badgeHash];
+        if (awarding.revokable == true) {
+            awarding.revoked = true;
         }
     }
 }
