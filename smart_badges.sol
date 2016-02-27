@@ -47,6 +47,15 @@ contract SmartBadges {
         badge.url = url;
     }
 
+    function getBadge(bytes32 badgeHash) constant external returns (address owner, string title, string description, string url, uint levels) {
+        Badge badge = badges[badgeHash];
+        owner = badge.owner;
+        title = badge.title;
+        description = badge.description;
+        url = badge.url;
+        levels = badge.levels.length;
+    }
+
     function setBadgeLevel(bytes32 badgeHash, uint level, string title, string description, bytes image) isOwner(badgeHash) external {
         Badge badge = badges[badgeHash];
         if (badge.levels.length < level + 1) {
@@ -57,6 +66,13 @@ contract SmartBadges {
             description: description,
             image: image,
         });
+    }
+
+    function getBadgeLevel(bytes32 badgeHash, uint i) external constant returns (string title, string description, bytes image) {
+        BadgeLevel level = badges[badgeHash].levels[i];
+        title = level.title;
+        description = level.description;
+        image = level.image;
     }
 
     function award(bytes32 badgeHash, uint level, address recipient, bool revokable, uint expiration) isOwner(badgeHash) external {
@@ -72,6 +88,15 @@ contract SmartBadges {
         });
 
         accountBadges[recipient].push(badgeHash);
+    }
+
+    function getAwarding(address recipient, bytes32 badgeHash) external constant returns (bool revokable, bool revoked, uint time, uint expiration, uint level) {
+        Awarding awarding = accountBadgeAwardings[recipient][badgeHash];
+        revokable = awarding.revokable;
+        revoked = awarding.revoked;
+        time = awarding.time;
+        expiration = awarding.expiration;
+        level = awarding.level;
     }
 
     function revoke(address recipient, bytes32 badgeHash) isOwner(badgeHash) external {
