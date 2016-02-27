@@ -31,7 +31,7 @@ contract SmartBadges {
     mapping (address => bytes32[]) accountBadges;
 
     modifier isOwner(bytes32 badgeHash) {
-        if (badges[badgeHash].owner == msg.sender) {
+        if (badges[badgeHash].owner != msg.sender) {
             throw;
         }
         _
