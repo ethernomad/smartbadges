@@ -31,6 +31,9 @@ contract SmartBadges {
 
     mapping (address => bytes32[]) accountBadges;
 
+    event AwardBadge(address indexed account, bytes32 indexed badgeHash, uint level);
+    event RevokeBadge(address indexed account, bytes32 indexed badgeHash);
+
     modifier isOwner(bytes32 badgeHash) {
         if (badges[badgeHash].owner != msg.sender) {
             throw;
@@ -88,6 +91,7 @@ contract SmartBadges {
         });
 
         accountBadges[recipient].push(badgeHash);
+        AwardBadge(recipient, badgeHash, level);
     }
 
     function getAwarding(address recipient, bytes32 badgeHash) external constant returns (bool revokable, bool revoked, uint time, uint expiration, uint level) {
@@ -104,5 +108,7 @@ contract SmartBadges {
         if (awarding.revokable == true) {
             awarding.revoked = true;
         }
+        RevokeBadge(recipient, badgeHash);
     }
+
 }
