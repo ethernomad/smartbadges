@@ -80,7 +80,7 @@ contract SmartBadges {
 
     function award(bytes32 badgeHash, uint level, address recipient, bool revokable, uint expiration) isOwner(badgeHash) external {
 
-        Badge badge = badges[badgeHash];
+        bool alreadyExists = accountBadgeAwardings[recipient][badgeHash].time > 0;
 
         accountBadgeAwardings[recipient][badgeHash] = Awarding({
             revokable: revokable,
@@ -90,7 +90,10 @@ contract SmartBadges {
             level: level,
         });
 
-        accountBadges[recipient].push(badgeHash);
+        if (!alreadyExists) {
+            accountBadges[recipient].push(badgeHash);
+        }
+
         AwardBadge(recipient, badgeHash, level);
     }
 
